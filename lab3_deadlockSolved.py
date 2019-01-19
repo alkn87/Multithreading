@@ -16,14 +16,16 @@ def calc_add_five():
   alock.acquire()
   time.sleep(1)
   a = a + 5
+  print inspect.stack()[0][3] + " releases lock a"
+  alock.release()
+
   print inspect.stack()[0][3] + " acquires lock b"
   block.acquire()
   time.sleep(1)
   b = b + 5 + a
   print inspect.stack()[0][3] + " releases lock b"
   block.release()
-  print inspect.stack()[0][3] + " releases lock a"
-  alock.release()
+  
 
 def calc_add_ten():
   global a
@@ -32,14 +34,17 @@ def calc_add_ten():
   block.acquire()
   time.sleep(1)
   b = b + 10
+  print inspect.stack()[0][3] + " releases lock b"
+  block.release()
+
   print inspect.stack()[0][3] + " acquires lock a"
   alock.acquire()
   time.sleep(1)
   a = a + 10 + b
-  print inspect.stack()[0][3] + " releases lock b"
-  block.release()
   print inspect.stack()[0][3] + " releases lock a"
   alock.release()
+
+  
 t1 = threading.Thread(target = calc_add_five)
 t2 = threading.Thread(target = calc_add_ten)
 t1.start()
